@@ -96,18 +96,23 @@ public class Exam6 {
 				}
 			}
 			
-			for ( int i = 1 ; i < m ; i++ ) {
-				for ( int j = 0 ; j < n ; j++ ) {
-					char item1 = board[i].charAt(j);
-					char item2 = board[i-1].charAt(j);
-					if ( item1 == ' ' && item2 != ' ' ) {
-						board[i-1] = board[i-1].substring(0, j) + " " + board[i-1].substring(j+1);
-						board[i] = board[i].substring(0, j) + item2 + board[i].substring(j+1);
+			boolean flag = true;
+			while ( flag ) {
+				flag = false;
+				for ( int i = 1 ; i < m ; i++ ) {
+					for ( int j = 0 ; j < n ; j++ ) {
+						char item1 = board[i].charAt(j);
+						char item2 = board[i-1].charAt(j);
+						if ( item1 == ' ' && item2 != ' ' ) {
+							flag = true;
+							board[i-1] = board[i-1].substring(0, j) + " " + board[i-1].substring(j+1);
+							board[i] = board[i].substring(0, j) + item2 + board[i].substring(j+1);
+						}
 					}
 				}
 			}
 			
-			System.out.println(delList);
+			System.out.println("삭제블록 원좌표 : " + delList);
 			
 			for ( String item : board ) {
 				System.out.println(item);

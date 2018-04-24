@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 4. 셔틀버스(난이도: 중)
 카카오에서는 무료 셔틀버스를 운행하기 때문에 판교역에서 편하게 사무실로 올 수 있다. 카카오의 직원은 서로를 ‘크루’라고 부르는데, 아침마다 많은 크루들이 이 셔틀을 이용하여 출근한다.
@@ -27,31 +30,79 @@ public class Exam4 {
 	public static void main(String[] args) {
 
 		// 셔틀 운행 횟수
-		int n = 2;
+		int n = 10;
 		
 		// 셔틀 운행 간격
-		int t = 10;
+		int t = 60;
 		
 		// 셔틀에 탈수 있는 최대 크루수
-		int m = 2;
+		int m = 45;
 		
 		// 크루 도착 시각
-		String[] timeTable = {"09:10", "09:09", "08:00"};
+		String[] timeTable = {"23:59","23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59", "23:59"};
 		
-		// 제일 늦게 탈수 있는 시각
-		String answer = "00:00";
+		String answer = "";
 		
-		// 막차 시각
-		int hour = 9 + t * (n-1) / 60;
-		int minute = t * (n-1) % 60;
+		int startTime = timeToNum("09:00");
+		int lastTime = startTime + t * (n - 1);
 		
-		if ( timeTable.length < m ) {
-			answer = (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute;
-		} else {
-			// ????????????????????? 혈당저하로 인한 중단
+		List<Integer> crewTime = new ArrayList();
+		for ( int i = 0 ; i < timeTable.length ; i++ ) {
+			crewTime.add( timeToNum( timeTable[i] ) );
 		}
 		
-		System.out.println(answer);
+		// 정렬
+		for ( int i = 0 ; i < crewTime.size() - 1 ; i++ ) {
+			for ( int j = i + 1 ; j < crewTime.size() ; j++ ) {
+				if ( crewTime.get(i) > crewTime.get(j) ) {
+					int temp = crewTime.get(i);
+					crewTime.set(i, crewTime.get(j));
+					crewTime.set(j, temp);
+				}
+			}
+		}
 		
+		for ( int i = 0 ; i < n ; i++ ) {
+			int shuttleTime = startTime + i * t;
+			
+			int takeNum = 0;
+			for ( int time : crewTime ) {
+				if ( shuttleTime >= time ) takeNum++;
+			}
+			
+//			System.out.println(shuttleTime + ", " + takeNum + ", " + crewTime.size());
+			
+			if (i == n - 1) {
+				if (takeNum < m) {
+					answer = numToTime(lastTime);
+				} else {
+					answer = numToTime(crewTime.get(m - 1) - 1);
+				}
+			} else {
+				if (takeNum > m) {
+					for ( int j = 0 ; j < m ; j++ ) {
+						crewTime.remove(0);
+					}
+				} else {
+					for ( int j = 0 ; j < takeNum ; j++ ) {
+						crewTime.remove(0);
+					}
+				}
+			}
+		}
+		
+		System.out.println("제일 늦게 탈수 있는 도착시각 : " + answer);
+	}
+	
+	// 시각 -> 분
+	private static int timeToNum(String time) {
+		return Integer.parseInt( time.split("\\:")[0] ) * 60 + Integer.parseInt( time.split("\\:")[1] );
+	}
+	
+	// 분 -> 시각
+	private static String numToTime(int num) {
+		int hour = num / 60;
+		int minute = num % 60;
+		return (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute;
 	}
 }
